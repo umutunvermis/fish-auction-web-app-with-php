@@ -20,7 +20,7 @@
         }
 
 
-        addFish($conn, $species, $weight, $basePrice, $finalPrice, $status, $sellDate);
+        addFish($conn, $species, $weight, $boatNo, $basePrice, $status, $sellDate);
 
 
 

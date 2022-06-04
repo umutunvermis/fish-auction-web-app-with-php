@@ -34,12 +34,13 @@ function isemailValid($email){
 }
 
 function isPasswordValid($password){
-    $r;
-    if( strlen($password) >= 8 && strlen($password) < 15){
-        $r = false;
-    }
-    else {
-        $r = true;
+    $r = 0;
+    $uppercase = preg_match('@[A-Z]@', $password);
+    $lowercase = preg_match('@[a-z]@', $password);
+    $number    = preg_match('@[0-9]@', $password);
+    
+    if(!$uppercase || !$lowercase || !$number || strlen($password) < 8) {
+      $r = 1;
     }
     return $r;
 }
@@ -142,19 +143,41 @@ function createUser($conn, $name, $email, $username, $phoneNum, $address, $passw
     
 }
 
-function addFish($conn, $species, $weight, $basePrice, $finalPrice, $status, $sellDate){
+function addFish($conn, $species, $weight, $boatNo, $basePrice, $status, $sellDate){
 
-    $sql = "INSERT INTO fish (species, weight, basePrice, finalPrice, status, sellDate) VALUES (?, ?, ?, ?, ?, ?);";
+    $sql = "INSERT INTO fish (species, weight, boatID, basePrice, status, sellDate) VALUES ( ?, ?, ?, ?, ?, ?);";
     $stmt = mysqli_stmt_init($conn);
     if(!mysqli_stmt_prepare($stmt,$sql)){
         header("location: ../addFish.php?error=stmterror");
         exit();
     }
 
-    mysqli_stmt_bind_param($stmt, "ssssss", $species, $weight, $basePrice, $finalPrice, $status, $sellDate);
+    mysqli_stmt_bind_param($stmt, "ssssss", $species, $weight, $boatNo, $basePrice, $status, $sellDate);
     mysqli_stmt_execute($stmt);
 
     header("location: ../addFish.php?error=none");
+}
+
+function deleteFish($conn, $id) {
+
+    $sql = "DELETE FROM fish WHERE id=$id";
+
+    if (!mysqli_query($conn, $sql)) {
+        echo "Error deleting record: " . mysqli_error($conn);
+    }
+
+    mysqli_close($conn);
+}
+
+function buyFish($conn, $id) {
+
+    $sql = "UPDATE fish SET status = 'paid' WHERE id=$id;";
+
+    if (!mysqli_query($conn, $sql)) {
+        echo "Error updating record: " . mysqli_error($conn);
+    }
+
+    mysqli_close($conn);
 }
 
 function addFisherman($conn, $name, $email, $phoneNum, $boatNo, $address){
@@ -214,19 +237,17 @@ function displayTimer($conn) {
         $row = mysqli_fetch_assoc($result);
 
         $sellDate = $row['sellDate'];
-    }
-    else {
-        header("Location: ../rename.php?error=stmtError");
-    }
-    $currTime = new DateTime();
-    $deadLine = new DateTime($sellDate);
-    $stamp = $deadLine->format('Y-m-d H:i:s');  
-    $diff=date_diff($currTime,$deadLine);
-    $display = $diff->format('%i Minute %s Seconds');
-    if ($diff->format("%r%i%s")>0) {
-        echo "<p id=time>Remaining Time time: $display</p>";
-    } else {
-        echo "<p id=time>finished</p>  ";
+        $currTime = new DateTime();
+        $deadLine = new DateTime($sellDate);
+        $stamp = $deadLine->format('Y-m-d H:i:s');  
+        $diff=date_diff($currTime,$deadLine);
+        $display = $diff->format('%i Minute %s Seconds');
+        if ($diff->format("%r%i%s")>0) {
+            echo "<p id=time>Remaining Time time: $display</p>";
+    
+        } else {
+            echo "<p id=time>finished</p>  ";
+        }
     }
 }
 
@@ -244,7 +265,7 @@ function finishSale() {
 
     }
     else {
-        header("Location: ../admin.php?error=stmtError");
+        header("Location: ../admin.php?error=auctionNotStarted");
     }
 
 

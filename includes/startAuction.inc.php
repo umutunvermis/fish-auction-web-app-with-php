@@ -3,6 +3,13 @@
     require 'dbh.inc.php';
     require 'functions.inc.php';
 
+    $streamLink = $_POST["streamLink"];
+
+    $dir = getcwd(); 
+    $file = fopen($dir."/streamLink.txt", "w+");  
+    fwrite($file,$streamLink);
+    fclose($file);
+
     if (!$conn) {
         die("Connection failed: " . mysqli_connect_error());
       }
@@ -28,18 +35,7 @@
       
     mysqli_close($conn);
 
-    /*
-    $result = mysqli_query($conn, $sql);
-
-    if(mysqli_num_rows($result) <= 0){
-        header("location: ../addFish.php?error=stmterror");
-        exit();
-    } 
-    else {
-        $row = mysqli_fetch_assoc($result);
-        echo  $row['species']  ;
-    }
-    */
     $_SESSION["auctionFlag"] = 1; // started
-    header("location: ../addFish.php");
+    $a = $_SESSION["auctionFlag"];  
+    header("location: ../rename.php");
 
