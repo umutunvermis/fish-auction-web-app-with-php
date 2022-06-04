@@ -20,6 +20,12 @@
                     echo "<p>Phone number is invaild!</p>";
                     echo "<p>Phone number must be a 10 digit number</p>";
                 }
+                if($_GET["error"] == "invalidpsw"){
+                    echo "<p>Password is invalid!</p>";
+                    echo "<p>A password must cointain at least a number, </p>";
+                    echo "<p>an upper case letter, and a lower case letter.</p>";
+                    echo "<p>And it must be longer than 8 charracters!</p>";
+                }
                 if($_GET["error"] == "invalidusername"){
                     echo "<p>Username is invalid!</p>";
                 }

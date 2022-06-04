@@ -1,5 +1,5 @@
 <?php
-
+    
     require 'includes/dbh.inc.php';
     require 'includes/functions.inc.php';
 
@@ -11,11 +11,17 @@
         $bid = $row['currentBid'];
         $species = $row['species'];
         $weight = $row['weight'];
+        $basePrice = $row['basePrice'];
+
+        echo "<H1>Current highest bid</H1>";
+
+        echo"<h3 id=species>$species</h3>";
+        echo"<h4 id=weight>Weight: $weight</h4>";
+        echo"<h4 id=bid>Current bid: $bid</h4>";
+        echo"<h4 id=bid>Base price: $basePrice</h4>";
     }
-    else {
-        header("Location: ../rename.php?error=stmtError");
+    else if (mysqli_num_rows($result) == 0) {
+        echo"<h1>Auction is over!</h1>";
     }
 
-    echo"<p id=species>$species</p>";
-    echo"<p id=weight>$weight</p>";
-    echo"<p id=bid>$bid</p>";
+?>

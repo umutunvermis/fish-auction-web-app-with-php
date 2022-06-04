@@ -17,7 +17,7 @@
         </form>
     </div>
 
-    <div id="message">
+    <div id="message" align="center">
         <?php
             if(isset($_GET["error"])){
                 if($_GET["error"] == "none"){
